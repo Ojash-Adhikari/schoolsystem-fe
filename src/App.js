@@ -22,11 +22,13 @@ const store = createStore({
 function App() {
   console.log(store);
   return (
+
     <AuthProvider store={store}>
       <Router>
         <Routing />
       </Router>
     </AuthProvider>
+
   );
 }
 

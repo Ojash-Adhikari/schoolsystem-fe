@@ -23,48 +23,20 @@ const Routing = () => {
     return (
         <>
             <ToastContainer />
-            <div style={{ position: "relative", zIndex: 2 }}>
+            <div>
                 <Routes>
-                    {/* Define routes here */}
-                    {/* Principal View Routes */}
                     <Route element={<ProtectedRoute allowedRoles={["PRINCIPAL"]} />}>
-                        <Route
-                            path="/admin/*"
-                            element={
-                                <div className="ml-16 p-4">
-                                    <Routes>
-                                        <Route path="/dashboard" element={<PDashboard />} />
-                                    </Routes>
-                                </div>
-                            }
-                        />
-                    </Route>
-                    {/* Teacher View Routes */}
-                    <Route element={<ProtectedRoute allowedRoles={["TEACHER", "PRINCIPAL"]} />}>
-                        <Route
-                            path="/teacher/*"
-                            element={
-                                <div className="ml-16 p-4">
-                                    <Routes>
-                                        <Route path="/dashboard" element={<TDashboard />} />
-                                    </Routes>
-                                </div>
-                            }
-                        />
+                        <Route path="/principal/dashboard" element={<PDashboard />} />
                     </Route>
 
-                    <Route element={<ProtectedRoute allowedRoles={["STUDENT", "PRINCIPAL"]} />}>
-                        <Route path="/user/*"
-                            element={
-                                <Routes>
-                                    {/* New Routes for Battle and Complaint */}
-                                    <Route path="/dashboard" element={<SDashboard />} />
-                                </Routes>
-                            }
-                        />
+                    <Route element={<ProtectedRoute allowedRoles={["TEACHER"]} />}>
+                        <Route path="/teacher/dashboard" element={<TDashboard />} />
                     </Route>
 
-                    {/* Login route should not have canvas or custom cursor */}
+                    <Route element={<ProtectedRoute allowedRoles={["STUDENT"]} />}>
+                        <Route path="/user/dashboard" element={<SDashboard />} />
+                    </Route>
+
                     <Route path="/" element={<Login />} />
                     <Route path="/register" element={<Register />} />
                 </Routes>
