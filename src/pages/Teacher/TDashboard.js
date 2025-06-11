@@ -48,10 +48,13 @@ const Sidebar = ({ activeItem, onItemClick, isOpen, onClose }) => {
 
 // Add Student Form Component
 const AddStudentForm = ({ isOpen, onClose, onSubmit }) => {
+    const user = useAuthUser();
     const [formData, setFormData] = useState({
         username: '',
         email: '',
-        phone_number: ''
+        phone_number: '',
+        updated_at:new Date().toISOString(),
+        created_by: user.id,
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errors, setErrors] = useState({});
