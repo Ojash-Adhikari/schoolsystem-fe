@@ -4,6 +4,7 @@ import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import useFetchAuth from '../../utils/Account/useFetchAuth';
 import axios from '../../utils/Account/axios';
 import { toast } from "react-toastify";
+import LogoutButton from './LogoutButton';
 
 const Sidebar = ({ activeItem, onItemClick, isOpen, onClose }) => {
     const menuItems = [
@@ -41,6 +42,7 @@ const Sidebar = ({ activeItem, onItemClick, isOpen, onClose }) => {
                         </li>
                     ))}
                 </ul>
+                <LogoutButton />
             </nav>
         </div>
     );
