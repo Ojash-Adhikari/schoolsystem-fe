@@ -12,7 +12,7 @@ const Register = () => {
   const [formData, setFormData] = useState({
     email: "",
     username: "",
-    phone_number: "",  // Updated from `phonenumber` to `phone_number`
+    phone_number: "",  
     password: "",
     confirmPassword: "",
   });

@@ -6,6 +6,7 @@ import axios from '../../utils/Account/axios';
 import { toast } from "react-toastify";
 import Sidebar from '../Components/Sidebar';
 import AddUserDropdown from '../Components/AddUserDropdown.jsx';
+import ProfileModal from '../Components/ProfileModal.jsx';
 // Add Student Form Component
 const AddStudentForm = ({ isOpen, onClose, onSubmit }) => {
     const user = useAuthUser();
@@ -454,6 +455,7 @@ const PDashboard = () => {
     const [showAddTeacherForm, setShowAddTeacherForm] = useState(false);
 
     const { data: student, isPending, error, refetch } = useFetchAuth("users/users/");
+    console.log(student);
     const users = student || [];
 
     const filteredUsers = users.filter(user =>
@@ -554,7 +556,7 @@ const PDashboard = () => {
     const currentUsers = sortedUsers.slice(indexOfFirstUser, indexOfLastUser);
 
     const totalPages = Math.ceil(sortedUsers.length / usersPerPage);
-
+    const [selectedUser, setSelectedUser] = useState(null);
 
     return (
         <div className="flex min-h-screen bg-gray-50">
@@ -698,6 +700,15 @@ const PDashboard = () => {
                                             {getSortIcon('created_at')}
                                         </div>
                                     </th>
+                                    <th
+                                        className="text-left py-3 px-6 font-medium text-gray-700 cursor-pointer hover:bg-gray-100 transition-colors"
+                                        onClick={() => handleSort('Enrollment Status')}
+                                    >
+                                        <div className="flex items-center">
+                                            Enrollment Status
+                                            {getSortIcon('Enrollment Status')}
+                                        </div>
+                                    </th>
                                     <th className="text-left py-3 px-6 font-medium text-gray-700"></th>
                                 </tr>
                             </thead>
@@ -709,8 +720,23 @@ const PDashboard = () => {
                                         <td className="py-4 px-6 text-gray-700">{user.phone_number}</td>
                                         <td className="py-4 px-6 text-gray-700 font-semibold">{user.user_type}</td>
                                         <td className="py-4 px-6 text-gray-600 text-sm">{formatDate(user.created_at)}</td>
+                                        <td className="py-2 px-2 text-gray-600 text-sm text-center">
+                                            <span
+                                                className={`px-2 py-1 rounded-full text-xs font-semibold ${user.is_enrolled === "PENDING"
+                                                    ? "bg-yellow-100 text-yellow-800 border border-yellow-300"
+                                                    : user.is_enrolled === "ENROLLED"
+                                                        ? "bg-green-100 text-green-800 border border-green-300"
+                                                        : "bg-gray-100 text-gray-600 border border-gray-300"
+                                                    }`}
+                                            >
+                                                {user.is_enrolled}
+                                            </span>
+                                        </td>
                                         <td className="py-4 px-6">
-                                            <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                            <button
+                                                onClick={() => setSelectedUser(user)} // assuming you manage modal state
+                                                className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                                            >
                                                 View Profile
                                             </button>
                                         </td>
@@ -719,6 +745,16 @@ const PDashboard = () => {
                             </tbody>
                         </table>
                     </div>
+                    {selectedUser && (
+                        <ProfileModal
+                            user={selectedUser}
+                            onClose={() => setSelectedUser(null)}
+                            onUpdated={() => {
+                                refetch(); // optional if you refresh list
+                                setSelectedUser(null);
+                            }}
+                        />
+                    )}
                     <div className="flex justify-end mt-4 space-x-2">
                         <button
                             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
