@@ -53,7 +53,7 @@ const AddStudentForm = ({ isOpen, onClose, onSubmit }) => {
         username: '',
         email: '',
         phone_number: '',
-        updated_at:new Date().toISOString(),
+        updated_at: new Date().toISOString(),
         created_by: user.id,
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -331,8 +331,8 @@ const TDashboard = () => {
         if (sortConfig.field !== field) {
             return null;
         }
-        return sortConfig.direction === 'asc' ? 
-            <ChevronUp className="w-4 h-4 ml-1" /> : 
+        return sortConfig.direction === 'asc' ?
+            <ChevronUp className="w-4 h-4 ml-1" /> :
             <ChevronDown className="w-4 h-4 ml-1" />;
     };
 
@@ -353,7 +353,18 @@ const TDashboard = () => {
             // Refresh the users list
             refetch();
         } catch (error) {
-             toast.error(error);
+            if (error.response && error.response.data) {
+                const errorData = error.response.data;
+
+                // Convert the error object to a readable string
+                const messages = Object.entries(errorData)
+                    .map(([field, messages]) => `${field}: ${messages.join(", ")}`)
+                    .join("\n");
+
+                toast.error(messages);  // shows field: message1, message2
+            } else {
+                toast.error("An unexpected error occurred.");
+            }
             console.error('Error adding student:', error);
             throw error; // Re-throw to handle in form component
         }
@@ -432,16 +443,16 @@ const TDashboard = () => {
                                     <option value="user_type">Sort by User Type</option>
                                 </select>
                                 <button
-                                    onClick={() => setSortConfig(prev => ({ 
-                                        ...prev, 
-                                        direction: prev.direction === 'asc' ? 'desc' : 'asc' 
+                                    onClick={() => setSortConfig(prev => ({
+                                        ...prev,
+                                        direction: prev.direction === 'asc' ? 'desc' : 'asc'
                                     }))}
                                     className="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-1"
                                     title={`Sort ${sortConfig.direction === 'asc' ? 'Descending' : 'Ascending'}`}
                                 >
                                     {sortConfig.direction === 'asc' ? 'A-Z' : 'Z-A'}
-                                    {sortConfig.direction === 'asc' ? 
-                                        <ChevronUp className="w-4 h-4" /> : 
+                                    {sortConfig.direction === 'asc' ?
+                                        <ChevronUp className="w-4 h-4" /> :
                                         <ChevronDown className="w-4 h-4" />
                                     }
                                 </button>
@@ -452,7 +463,7 @@ const TDashboard = () => {
                     {/* Results Count */}
                     <div className="mb-4">
                         <p className="text-gray-600">
-                            {filteredUsers.length} Results 
+                            {filteredUsers.length} Results
                             {sortConfig.field && (
                                 <span className="ml-2 text-sm">
                                     (sorted by {sortConfig.field.replace('_', ' ')} - {sortConfig.direction === 'asc' ? 'ascending' : 'descending'})
@@ -466,7 +477,7 @@ const TDashboard = () => {
                         <table className="w-full">
                             <thead className="bg-gray-50 border-b border-gray-200">
                                 <tr>
-                                    <th 
+                                    <th
                                         className="text-left py-3 px-6 font-medium text-gray-700 cursor-pointer hover:bg-gray-100 transition-colors"
                                         onClick={() => handleSort('username')}
                                     >
@@ -475,7 +486,7 @@ const TDashboard = () => {
                                             {getSortIcon('username')}
                                         </div>
                                     </th>
-                                    <th 
+                                    <th
                                         className="text-left py-3 px-6 font-medium text-gray-700 cursor-pointer hover:bg-gray-100 transition-colors"
                                         onClick={() => handleSort('email')}
                                     >
@@ -485,7 +496,7 @@ const TDashboard = () => {
                                         </div>
                                     </th>
                                     <th className="text-left py-3 px-6 font-medium text-gray-700">Phone Number</th>
-                                    <th 
+                                    <th
                                         className="text-left py-3 px-6 font-medium text-gray-700 cursor-pointer hover:bg-gray-100 transition-colors"
                                         onClick={() => handleSort('user_type')}
                                     >
@@ -494,7 +505,7 @@ const TDashboard = () => {
                                             {getSortIcon('user_type')}
                                         </div>
                                     </th>
-                                    <th 
+                                    <th
                                         className="text-left py-3 px-6 font-medium text-gray-700 cursor-pointer hover:bg-gray-100 transition-colors"
                                         onClick={() => handleSort('created_at')}
                                     >

@@ -51,7 +51,7 @@ const Register = () => {
       .post("/api/users/register/", userData)
       .then((response) => {
         toast.success("Registration Successful. Redirecting to login...");
-        navigate("/login");
+        navigate("/");
       })
       .catch((error) => {
         console.error(error);
@@ -166,7 +166,7 @@ const Register = () => {
                     {passwordVisibility ? "Hide Password" : "Show Password"}
                   </button>
                   <div className="text-white text-sm mt-2 md:text-md">
-                    <a href="/login" className="custom-link">Sign in</a>
+                    <a href="/" className="custom-link">Sign in</a>
                   </div>
                 </div>
 
