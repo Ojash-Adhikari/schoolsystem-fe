@@ -4,7 +4,7 @@ import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import useFetchAuth from '../../utils/Account/useFetchAuth';
 import axios from '../../utils/Account/axios';
 import { toast } from "react-toastify";
-import Sidebar from '../Components/Sidebar.js';
+import Sidebar from '../Components/Sidebar';
 
 // Add Student Form Component
 const AddStudentForm = ({ isOpen, onClose, onSubmit }) => {
@@ -233,8 +233,6 @@ const TDashboard = () => {
         field: 'username',
         direction: 'asc'
     });
-    const [activeMenuItem, setActiveMenuItem] = useState('personal-development');
-    const [sidebarOpen, setSidebarOpen] = useState(false);
     const [showAddStudentForm, setShowAddStudentForm] = useState(false);
 
     const { data: student, isPending, error, refetch } = useFetchAuth("users/users/");
@@ -334,35 +332,7 @@ const TDashboard = () => {
     return (
         <div className="flex min-h-screen bg-gray-50">
             {/* Sidebar toggle button for small screens */}
-            <button
-                onClick={() => setSidebarOpen(true)}
-                className="p-2 m-2 rounded-md text-gray-600 hover:text-gray-900 md:hidden fixed top-4 left-4 z-40 bg-white shadow"
-                aria-label="Open sidebar"
-            >
-                <Menu size={24} />
-            </button>
-
-            {/* Sidebar */}
-            <Sidebar
-                activeItem={activeMenuItem}
-                onItemClick={(id) => {
-                    setActiveMenuItem(id);
-                    setSidebarOpen(false); // close sidebar after selection on mobile
-                }}
-                isOpen={sidebarOpen || window.innerWidth >= 768} // open by default on md+
-                onClose={() => setSidebarOpen(false)}
-            />
-
-            {/* Overlay for sidebar on mobile */}
-            {sidebarOpen && window.innerWidth < 768 && (
-                <div
-                    onClick={() => setSidebarOpen(false)}
-                    className="fixed inset-0 bg-black opacity-30 z-20"
-                    aria-hidden="true"
-                />
-            )}
-
-            <div className="flex-1 p-6 ml-0 md:ml-64">
+            <div className="flex-1 p-6 ml-0 md:ml-32">
                 <div className="max-w-7xl mx-auto">
                     {/* Header */}
                     <div className="flex justify-between items-center mb-6">
@@ -499,13 +469,13 @@ const TDashboard = () => {
                 </div>
             </div>
 
-            {/* Add Student Form */}
-            <AddStudentForm
-                isOpen={showAddStudentForm}
-                onClose={() => setShowAddStudentForm(false)}
-                onSubmit={handleAddStudent}
-            />
-        </div>
+            {/* Add Student Form */ }
+    <AddStudentForm
+        isOpen={showAddStudentForm}
+        onClose={() => setShowAddStudentForm(false)}
+        onSubmit={handleAddStudent}
+    />
+        </div >
     );
 };
 

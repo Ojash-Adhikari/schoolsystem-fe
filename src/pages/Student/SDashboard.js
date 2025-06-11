@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Plus, Menu, X, ChevronUp, ChevronDown, User, Mail, Phone, Calendar, Shield, Clock } from 'lucide-react';
+import LogoutButton from '../Components/LogoutButton';
 
 const SDashboard = () => {
     // Mock user data based on the provided structure
@@ -12,7 +13,8 @@ const SDashboard = () => {
         phone_number: "+9779848583301",
         updated_at: "2025-06-11T08:58:52.009838Z",
         user_type: "STUDENT",
-        username: "ojash3"
+        username: "ojash3",
+        is_enrolled: "PENDING"
     };
 
     const username = user?.username || 'Guest User';
@@ -78,6 +80,7 @@ const SDashboard = () => {
             data: [
                 { label: "User ID", value: user.id, icon: <User className="w-4 h-4" /> },
                 { label: "Status", value: getStatusBadge(user.is_deleted), icon: <Shield className="w-4 h-4" /> },
+                { label: "Enrollment Status", value: user.is_enrolled, icon: <Shield className="w-4 h-4" /> },
                 { label: "Created Date", value: formatDate(user.created_at), icon: <Calendar className="w-4 h-4" /> },
                 { label: "Last Updated", value: formatDate(user.updated_at), icon: <Clock className="w-4 h-4" /> }
             ]
@@ -123,6 +126,7 @@ const SDashboard = () => {
                             <a href="#" className="flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md">
                                 Assignments
                             </a>
+                            <LogoutButton/>
                         </div>
                     </div>
                 </nav>

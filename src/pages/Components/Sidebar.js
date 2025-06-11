@@ -1,20 +1,30 @@
-import React, { useState } from 'react';
-import { Search, Plus, Menu, X, ChevronUp, ChevronDown } from 'lucide-react';
-import useAuthUser from "react-auth-kit/hooks/useAuthUser";
-import useFetchAuth from '../../utils/Account/useFetchAuth';
-import axios from '../../utils/Account/axios';
-import { toast } from "react-toastify";
+import React from 'react';
+import { Menu, X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import LogoutButton from './LogoutButton';
+import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
 
-const Sidebar = ({ activeItem, onItemClick, isOpen, onClose }) => {
-    const menuItems = [
-        { id: 'personal-development', label: 'Personal Development' },
-        { id: 'academic-coaching', label: 'Academic Coaching' },
-        { id: 'career-guidance', label: 'Career Guidance' },
-        { id: 'life-skills', label: 'Life Skills' },
-        { id: 'reports', label: 'Reports' },
-        { id: 'settings', label: 'Settings' }
+
+const Sidebar = ({ activeItem, isOpen, onClose }) => {
+    const auth = useAuthUser();
+    const role = auth?.user_type;
+    const navigate = useNavigate();
+
+    const menuItems = role === "TEACHER"
+  ? [
+      { id: 'Tdashboard', label: 'Teacher Dashboard', path: '/teacher/dashboard' },
+      { id: 'assignments', label: 'Assignments', path: '/teacher/assignment' },
+    ]
+  : [
+      { id: 'Pdashboard', label: 'Principal Dashboard', path: '/principal/dashboard' },
+      { id: 'assignments', label: 'Assignments', path: '/principal/assignment' },
+      { id: 'career-guidance', label: 'Career Guidance', path: '/student/career-guidance' },
+      { id: 'life-skills', label: 'Life Skills', path: '/student/life-skills' },
+      { id: 'reports', label: 'Reports', path: '/student/reports' },
+      { id: 'settings', label: 'Settings', path: '/student/settings' }
     ];
+
+    
 
     if (!isOpen) return null;
 
@@ -31,7 +41,7 @@ const Sidebar = ({ activeItem, onItemClick, isOpen, onClose }) => {
                     {menuItems.map((item) => (
                         <li key={item.id}>
                             <button
-                                onClick={() => onItemClick(item.id)}
+                                onClick={() => navigate(item.path)}
                                 className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${activeItem === item.id
                                     ? 'bg-blue-100 text-blue-700 font-medium'
                                     : 'text-gray-600 hover:bg-gray-100'
