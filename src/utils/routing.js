@@ -15,6 +15,9 @@ import Register from "../pages/Account/Register.js";
 // Protected Route Import
 import ProtectedRoute from "./protectedRoute.js";
 
+// Error Imports
+import Unauthorized from "../pages/Components/Unauthorized.jsx";
+
 // External Imports
 import { ToastContainer } from "react-toastify";
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
@@ -51,6 +54,7 @@ const Routing = () => {
 
                     <Route path="/" element={<Login />} />
                     <Route path="/register" element={<Register />} />
+                    <Route path="/unauthorized" element={<Unauthorized />} />
                 </Routes>
             </div>
         </>
