@@ -3,10 +3,12 @@ import { useState, useEffect } from "react";
 
 // Principal View Import
 import PDashboard from "../pages/Principal/PDashboard.js";
+import SubjectAndCir from "../pages/Principal/SubjectAndCir.js";
 
 // Teacher View Import
 import TDashboard from "../pages/Teacher/TDashboard.js";
 import Assignment from "../pages/Teacher/Assignment.js";
+
 // User View Import
 import SDashboard from "../pages/Student/SDashboard.js";
 
@@ -63,6 +65,7 @@ const Routing = () => {
                 <Routes>
                     <Route element={<ProtectedRoute allowedRoles={["PRINCIPAL"]} />}>
                         <Route path="/principal/dashboard" element={<PDashboard />} />
+                        <Route path="/principal/essentials" element={<SubjectAndCir />} />
                     </Route>
 
                     <Route element={<ProtectedRoute allowedRoles={["TEACHER"]} />}>

@@ -51,9 +51,9 @@ const Assignment = () => {
     try {
       // These endpoints might need to be adjusted based on your actual API
       const [curriculumRes, classroomRes, subjectRes] = await Promise.all([
-        axios.get('api/curriculums').catch(() => ({ data: [] })),
-        axios.get('api/classrooms').catch(() => ({ data: [] })),
-        axios.get('api/subjects').catch(() => ({ data: [] }))
+        axios.get('api/classroom/curriculums').catch(() => ({ data: [] })),
+        axios.get('api/classroom').catch(() => ({ data: [] })),
+        axios.get('api/classroom/subjects').catch(() => ({ data: [] }))
       ]);
       
       setCurriculums(curriculumRes.data);
@@ -131,7 +131,7 @@ const Assignment = () => {
         });
         setError('');
       } else {
-        await axios.post('api/classroom/assignments', submitData, {
+        await axios.post('api/classroom/assignments/', submitData, {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
         setError('');

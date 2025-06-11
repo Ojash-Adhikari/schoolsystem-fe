@@ -236,7 +236,6 @@ const TDashboard = () => {
     const [showAddStudentForm, setShowAddStudentForm] = useState(false);
 
     const { data: student, isPending, error, refetch } = useFetchAuth("users/users/");
-    console.log(student);
     const users = student || [];
 
     const filteredUsers = users.filter(user =>

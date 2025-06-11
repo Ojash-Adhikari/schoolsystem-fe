@@ -17,8 +17,8 @@ const Sidebar = ({ activeItem, isOpen, onClose }) => {
     ]
   : [
       { id: 'Pdashboard', label: 'Principal Dashboard', path: '/principal/dashboard' },
+      { id: 'essentials', label: 'Essentials', path: '/principal/essentials' },
       { id: 'assignments', label: 'Assignments', path: '/principal/assignment' },
-      { id: 'career-guidance', label: 'Career Guidance', path: '/student/career-guidance' },
       { id: 'life-skills', label: 'Life Skills', path: '/student/life-skills' },
       { id: 'reports', label: 'Reports', path: '/student/reports' },
       { id: 'settings', label: 'Settings', path: '/student/settings' }
