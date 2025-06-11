@@ -546,6 +546,16 @@ const PDashboard = () => {
         }
     };
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const usersPerPage = 10;
+
+    const indexOfLastUser = currentPage * usersPerPage;
+    const indexOfFirstUser = indexOfLastUser - usersPerPage;
+    const currentUsers = sortedUsers.slice(indexOfFirstUser, indexOfLastUser);
+
+    const totalPages = Math.ceil(sortedUsers.length / usersPerPage);
+
+
     return (
         <div className="flex min-h-screen bg-gray-50">
             {/* Sidebar toggle button for small screens */}
@@ -692,8 +702,8 @@ const PDashboard = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {sortedUsers.map((user, index) => (
-                                    <tr key={user.id} className={index !== sortedUsers.length - 1 ? 'border-b border-gray-100' : ''}>
+                                {currentUsers.map((user, index) => (
+                                    <tr key={user.id} className={index !== currentUsers.length - 1 ? 'border-b border-gray-100' : ''}>
                                         <td className="py-4 px-6 text-gray-900">{user.username}</td>
                                         <td className="py-4 px-6 text-gray-700">{user.email}</td>
                                         <td className="py-4 px-6 text-gray-700">{user.phone_number}</td>
@@ -708,6 +718,34 @@ const PDashboard = () => {
                                 ))}
                             </tbody>
                         </table>
+                    </div>
+                    <div className="flex justify-end mt-4 space-x-2">
+                        <button
+                            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                            disabled={currentPage === 1}
+                            className="px-3 py-1 border rounded text-sm bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
+                        >
+                            Prev
+                        </button>
+                        {Array.from({ length: totalPages }, (_, index) => (
+                            <button
+                                key={index}
+                                onClick={() => setCurrentPage(index + 1)}
+                                className={`px-3 py-1 border rounded text-sm ${currentPage === index + 1
+                                    ? 'bg-blue-600 text-white'
+                                    : 'bg-gray-100 hover:bg-gray-200'
+                                    }`}
+                            >
+                                {index + 1}
+                            </button>
+                        ))}
+                        <button
+                            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                            disabled={currentPage === totalPages}
+                            className="px-3 py-1 border rounded text-sm bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
+                        >
+                            Next
+                        </button>
                     </div>
                 </div>
             </div>
