@@ -59,7 +59,7 @@ const Routing = () => {
                 />
             )}
 
-            <div className="ml-16"> {/* offset to account for sidebar */}
+            <div> {/* offset to account for sidebar */}
                 <Routes>
                     <Route element={<ProtectedRoute allowedRoles={["PRINCIPAL"]} />}>
                         <Route path="/principal/dashboard" element={<PDashboard />} />
