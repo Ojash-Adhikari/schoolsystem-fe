@@ -312,6 +312,7 @@ const TDashboard = () => {
             console.log('Student added successfully:', response.data);
             // Refresh the users list
             refetch();
+            toast.success("User Added Successfully")
         } catch (error) {
             if (error.response && error.response.data) {
                 const errorData = error.response.data;
