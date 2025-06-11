@@ -22,7 +22,19 @@ import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 const Routing = () => {
     return (
         <>
-            <ToastContainer />
+            <div style={{ position: "fixed", top: "20px", left: "50%", transform: "translateX(-50%)", zIndex: 9999 }}>
+            <ToastContainer
+                position="top-center"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+            />
+        </div>
             <div>
                 <Routes>
                     <Route element={<ProtectedRoute allowedRoles={["PRINCIPAL"]} />}>

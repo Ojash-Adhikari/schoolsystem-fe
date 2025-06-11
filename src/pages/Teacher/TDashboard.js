@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Search, Plus, Menu, X } from 'lucide-react';
+import { Search, Plus, Menu, X, ChevronUp, ChevronDown } from 'lucide-react';
 import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import useFetchAuth from '../../utils/Account/useFetchAuth';
 import axios from '../../utils/Account/axios';
-
+import { toast } from "react-toastify";
 // Sidebar Component
 const Sidebar = ({ activeItem, onItemClick, isOpen, onClose }) => {
     const menuItems = [
@@ -269,12 +269,16 @@ const TDashboard = () => {
     const userType = user?.user_type || 'User Type Unknown';
 
     const [searchTerm, setSearchTerm] = useState('');
-    const [sortBy, setSortBy] = useState('name');
+    const [sortConfig, setSortConfig] = useState({
+        field: 'username',
+        direction: 'asc'
+    });
     const [activeMenuItem, setActiveMenuItem] = useState('personal-development');
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [showAddStudentForm, setShowAddStudentForm] = useState(false);
 
     const { data: student, isPending, error, refetch } = useFetchAuth("users/users/");
+    console.log(student);
     const users = student || [];
 
     const filteredUsers = users.filter(user =>
@@ -282,23 +286,65 @@ const TDashboard = () => {
     );
 
     const sortedUsers = filteredUsers.slice().sort((a, b) => {
-        if (sortBy === 'name') {
-            return a.username.localeCompare(b.username);
+        const { field, direction } = sortConfig;
+        let aValue, bValue;
+
+        switch (field) {
+            case 'username':
+                aValue = a.username.toLowerCase();
+                bValue = b.username.toLowerCase();
+                break;
+            case 'email':
+                aValue = a.email.toLowerCase();
+                bValue = b.email.toLowerCase();
+                break;
+            case 'created_at':
+                aValue = new Date(a.created_at);
+                bValue = new Date(b.created_at);
+                break;
+            case 'user_type':
+                aValue = a.user_type.toLowerCase();
+                bValue = b.user_type.toLowerCase();
+                break;
+            default:
+                return 0;
         }
-        if (sortBy === 'status') {
-            // Assuming user has a 'status' property, else fallback to ''
-            const statusA = (a.status || '').toLowerCase();
-            const statusB = (b.status || '').toLowerCase();
-            return statusA.localeCompare(statusB);
+
+        let comparison = 0;
+        if (aValue > bValue) {
+            comparison = 1;
+        } else if (aValue < bValue) {
+            comparison = -1;
         }
-        if (sortBy === 'nextSession') {
-            // Assuming user.nextSession is an ISO date string or null
-            const dateA = a.nextSession ? new Date(a.nextSession) : new Date(0);
-            const dateB = b.nextSession ? new Date(b.nextSession) : new Date(0);
-            return dateA - dateB;
-        }
-        return 0;
+
+        return direction === 'desc' ? comparison * -1 : comparison;
     });
+
+    const handleSort = (field) => {
+        setSortConfig(prevConfig => ({
+            field,
+            direction: prevConfig.field === field && prevConfig.direction === 'asc' ? 'desc' : 'asc'
+        }));
+    };
+
+    const getSortIcon = (field) => {
+        if (sortConfig.field !== field) {
+            return null;
+        }
+        return sortConfig.direction === 'asc' ? 
+            <ChevronUp className="w-4 h-4 ml-1" /> : 
+            <ChevronDown className="w-4 h-4 ml-1" />;
+    };
+
+    const formatDate = (dateString) => {
+        return new Date(dateString).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    };
 
     const handleAddStudent = async (studentData) => {
         try {
@@ -307,6 +353,7 @@ const TDashboard = () => {
             // Refresh the users list
             refetch();
         } catch (error) {
+             toast.error(error);
             console.error('Error adding student:', error);
             throw error; // Re-throw to handle in form component
         }
@@ -373,25 +420,45 @@ const TDashboard = () => {
                             />
                         </div>
                         <div className="flex items-center gap-4 ml-4">
-                            <button className="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                                Search
-                            </button>
-                            <select
-                                value={sortBy}
-                                onChange={(e) => setSortBy(e.target.value)}
-                                className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            >
-                                <option value="name">Sort By</option>
-                                <option value="name">Name</option>
-                                <option value="status">Status</option>
-                                <option value="nextSession">Next Session</option>
-                            </select>
+                            <div className="flex items-center gap-2">
+                                <select
+                                    value={sortConfig.field}
+                                    onChange={(e) => setSortConfig(prev => ({ ...prev, field: e.target.value }))}
+                                    className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                >
+                                    <option value="username">Sort by Name</option>
+                                    <option value="email">Sort by Email</option>
+                                    <option value="created_at">Sort by Created Date</option>
+                                    <option value="user_type">Sort by User Type</option>
+                                </select>
+                                <button
+                                    onClick={() => setSortConfig(prev => ({ 
+                                        ...prev, 
+                                        direction: prev.direction === 'asc' ? 'desc' : 'asc' 
+                                    }))}
+                                    className="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-1"
+                                    title={`Sort ${sortConfig.direction === 'asc' ? 'Descending' : 'Ascending'}`}
+                                >
+                                    {sortConfig.direction === 'asc' ? 'A-Z' : 'Z-A'}
+                                    {sortConfig.direction === 'asc' ? 
+                                        <ChevronUp className="w-4 h-4" /> : 
+                                        <ChevronDown className="w-4 h-4" />
+                                    }
+                                </button>
+                            </div>
                         </div>
                     </div>
 
                     {/* Results Count */}
                     <div className="mb-4">
-                        <p className="text-gray-600">{filteredUsers.length} Results</p>
+                        <p className="text-gray-600">
+                            {filteredUsers.length} Results 
+                            {sortConfig.field && (
+                                <span className="ml-2 text-sm">
+                                    (sorted by {sortConfig.field.replace('_', ' ')} - {sortConfig.direction === 'asc' ? 'ascending' : 'descending'})
+                                </span>
+                            )}
+                        </p>
                     </div>
 
                     {/* Users Table */}
@@ -399,20 +466,54 @@ const TDashboard = () => {
                         <table className="w-full">
                             <thead className="bg-gray-50 border-b border-gray-200">
                                 <tr>
-                                    <th className="text-left py-3 px-6 font-medium text-gray-700">Username</th>
-                                    <th className="text-left py-3 px-6 font-medium text-gray-700">Email</th>
+                                    <th 
+                                        className="text-left py-3 px-6 font-medium text-gray-700 cursor-pointer hover:bg-gray-100 transition-colors"
+                                        onClick={() => handleSort('username')}
+                                    >
+                                        <div className="flex items-center">
+                                            Username
+                                            {getSortIcon('username')}
+                                        </div>
+                                    </th>
+                                    <th 
+                                        className="text-left py-3 px-6 font-medium text-gray-700 cursor-pointer hover:bg-gray-100 transition-colors"
+                                        onClick={() => handleSort('email')}
+                                    >
+                                        <div className="flex items-center">
+                                            Email
+                                            {getSortIcon('email')}
+                                        </div>
+                                    </th>
                                     <th className="text-left py-3 px-6 font-medium text-gray-700">Phone Number</th>
-                                    <th className="text-left py-3 px-6 font-medium text-gray-700">User Type</th>
+                                    <th 
+                                        className="text-left py-3 px-6 font-medium text-gray-700 cursor-pointer hover:bg-gray-100 transition-colors"
+                                        onClick={() => handleSort('user_type')}
+                                    >
+                                        <div className="flex items-center">
+                                            User Type
+                                            {getSortIcon('user_type')}
+                                        </div>
+                                    </th>
+                                    <th 
+                                        className="text-left py-3 px-6 font-medium text-gray-700 cursor-pointer hover:bg-gray-100 transition-colors"
+                                        onClick={() => handleSort('created_at')}
+                                    >
+                                        <div className="flex items-center">
+                                            Created At
+                                            {getSortIcon('created_at')}
+                                        </div>
+                                    </th>
                                     <th className="text-left py-3 px-6 font-medium text-gray-700"></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {filteredUsers.map((user, index) => (
-                                    <tr key={user.id} className={index !== filteredUsers.length - 1 ? 'border-b border-gray-100' : ''}>
+                                {sortedUsers.map((user, index) => (
+                                    <tr key={user.id} className={index !== sortedUsers.length - 1 ? 'border-b border-gray-100' : ''}>
                                         <td className="py-4 px-6 text-gray-900">{user.username}</td>
                                         <td className="py-4 px-6 text-gray-700">{user.email}</td>
                                         <td className="py-4 px-6 text-gray-700">{user.phone_number}</td>
                                         <td className="py-4 px-6 text-gray-700 font-semibold">{user.user_type}</td>
+                                        <td className="py-4 px-6 text-gray-600 text-sm">{formatDate(user.created_at)}</td>
                                         <td className="py-4 px-6">
                                             <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
                                                 View Profile
